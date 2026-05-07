@@ -1,0 +1,309 @@
+/* =============================================
+   ADMIN.CSS - ZEA BARBER PREMIUM
+   ============================================= */
+
+:root {
+    --primary: #c5a059;       /* Dorado Principal */
+    --primary-light: #e6bc6a; /* Dorado para Hovers */
+    --bg: #0a0a0a;            /* Negro Fondo */
+    --card-bg: #161616;       /* Gris Tarjetas */
+    --text: #ffffff;          /* Blanco Texto */
+    --success: #28a745;       /* Verde Éxito */
+    --error: #dc3545;         /* Rojo Error */
+}
+
+/* Estilos Generales */
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--bg);
+    color: var(--text);
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+}
+
+/* =============================================
+   PANTALLA DE LOGIN (Atractiva)
+   ============================================= */
+#login-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(10, 10, 10, 0.98);
+    backdrop-filter: blur(15px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.login-card {
+    background: var(--card-bg);
+    padding: 40px;
+    border-radius: 24px;
+    border: 1px solid #222;
+    text-align: center;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+    max-width: 350px;
+    width: 90%;
+}
+
+.login-card h2 {
+    font-size: 28px;
+    margin-bottom: 10px;
+    letter-spacing: 2px;
+}
+
+.login-card h2 span {
+    color: var(--primary);
+}
+
+.login-card p {
+    color: #888;
+    font-size: 14px;
+    margin-bottom: 30px;
+}
+
+.login-input {
+    width: 100%;
+    padding: 15px;
+    background: #000;
+    border: 1px solid #333;
+    border-radius: 12px;
+    color: #fff;
+    font-size: 20px;
+    text-align: center;
+    letter-spacing: 8px;
+    box-sizing: border-box;
+    margin-bottom: 20px;
+    transition: border 0.3s;
+}
+
+.login-input:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+.btn-login {
+    width: 100%;
+    padding: 15px;
+    background: var(--primary);
+    color: #000;
+    border: none;
+    border-radius: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: transform 0.2s, background 0.3s;
+}
+
+.btn-login:hover {
+    background: var(--primary-light);
+    transform: translateY(-2px);
+}
+
+/* =============================================
+   HEADER FIJO (Sticky Header)
+   ============================================= */
+.header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    padding: 20px;
+    text-align: center;
+    background: rgba(22, 22, 22, 0.8); /* Semi-transparente */
+    backdrop-filter: blur(12px);      /* Efecto de cristal */
+    border-bottom: 1px solid #222;
+}
+
+.brand {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    margin: 0;
+}
+
+.brand span {
+    color: var(--primary);
+}
+
+/* Contenedor Principal */
+.container {
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* =============================================
+   DASHBOARD / ESTADÍSTICAS
+   ============================================= */
+.stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.stat-card {
+    background: var(--card-bg);
+    padding: 20px;
+    border-radius: 20px;
+    border: 1px solid #222;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; width: 4px; height: 100%;
+    background: var(--primary);
+}
+
+/* Pestañas de Navegación (Tabs) */
+.tabs {
+    display: flex;
+    background: #111;
+    padding: 5px;
+    border-radius: 14px;
+    margin-bottom: 20px;
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    border-radius: 10px;
+    background: transparent;
+    color: #666;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.tab-btn.active {
+    background: var(--primary);
+    color: #000;
+}
+
+/* Input de Fecha */
+.date-input {
+    width: 100%;
+    padding: 15px;
+    background: var(--card-bg);
+    border: 1px solid #333;
+    border-radius: 12px;
+    color: #fff;
+    font-family: inherit;
+    margin-bottom: 25px;
+    box-sizing: border-box;
+}
+
+/* =============================================
+   TARJETAS DE CITAS (Appointments)
+   ============================================= */
+.appointment-card {
+    background: var(--card-bg);
+    border-radius: 20px;
+    padding: 20px;
+    margin-bottom: 15px;
+    border: 1px solid #222;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: transform 0.2s;
+}
+
+.time-badge {
+    color: var(--primary);
+    font-weight: 700;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    line-height: 1.1; /* Ajuste para que la fecha no se separe mucho de la hora */
+}
+
+.promo-tag {
+    font-size: 10px;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-weight: 700;
+    display: inline-block;
+    margin-top: 8px;
+}
+
+.tag-normal { background: #222; color: #888; }
+.tag-promo { 
+    background: #FFD700; 
+    color: #000; 
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.2); 
+}
+
+/* Botones de Status */
+.btn-status {
+    border: none;
+    padding: 12px;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 10px;
+    cursor: pointer;
+    width: 100px;
+    text-transform: uppercase;
+    transition: 0.3s;
+}
+
+.btn-pending { background: var(--primary); color: #000; }
+.btn-done { 
+    background: transparent; 
+    color: var(--success); 
+    border: 1.5px solid var(--success); 
+}
+
+/* Icono WhatsApp */
+.wsp-icon {
+    background: #25D366;
+    color: #fff;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    font-size: 18px;
+}
+.time-badge div {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+}
+/* admin.css */
+
+/* ... tus estilos anteriores ... */
+
+/* Estilo para las citas ATENDIDAS (Efecto "nublado") */
+.appointment-card.atendido {
+    opacity: 0.5; /* Reduce la visibilidad a la mitad */
+    cursor: default; /* Indica que no es interactiva */
+    border-color: #333; /* Un borde más oscuro */
+    pointer-events: none; /* Desactiva clics en toda la tarjeta, excepto el botón si lo quisieras interactivo */
+}
+
+/* Opcional: Asegurar que el botón de LISTO no cambie pointer-events */
+.appointment-card.atendido .btn-status {
+    pointer-events: auto; /* Permite clics en el botón si lo necesitas interactivo */
+}
+
+/* Ajuste para que el icono de WhatsApp siga visible pero un poco transparente */
+.appointment-card.atendido .wsp-icon {
+    opacity: 0.7;
+}
+
+/* Asegurar que el time-badge se vea bien */
+.appointment-card.atendido .time-badge {
+    color: #888; /* Color gris para el tiempo */
+}

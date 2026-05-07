@@ -1,0 +1,279 @@
+:root {
+    --bg: #0a0a0a;
+    --card: #161616;
+    --gold: #c5a059;
+    --white: #ffffff;
+    --gray: #888;
+}
+
+/* RESETS Y COMPORTAMIENTO */
+html {
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch; 
+}
+
+* { 
+    box-sizing: border-box; 
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    background: var(--bg);
+    color: var(--white);
+    font-family: 'Poppins', sans-serif;
+    margin: 0; 
+    padding-bottom: 80px;
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+/* HEADER PREMIUM */
+header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    padding: 20px;
+    text-align: center;
+    background: rgba(10, 10, 10, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid #222;
+}
+
+header h1 {
+    font-size: 24px;
+    letter-spacing: 4px;
+    margin: 0;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+header h1 span { color: var(--gold); }
+
+.container { 
+    padding: 20px; 
+    max-width: 480px; 
+    margin: auto; 
+}
+
+.title { 
+    font-size: 13px; 
+    text-transform: uppercase; 
+    color: var(--gold); 
+    letter-spacing: 2.5px; 
+    margin: 20px 0 15px;
+    font-weight: 600;
+    border-left: 2px solid var(--gold);
+    padding-left: 12px;
+}
+
+/* DISEÑO TARJETA (Imagen 2) */
+.card-dark {
+    background: var(--card);
+    padding: 25px;
+    border-radius: 20px;
+    border: 1px solid #262626;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+    animation: fadeIn 0.5s ease;
+}
+
+/* ACORDEONES */
+.category-header {
+    background: #1a1a1a;
+    padding: 18px 20px;
+    border-radius: 12px;
+    margin-top: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    color: var(--gold);
+    font-weight: 600;
+    border: 1px solid #222;
+    transition: 0.3s;
+}
+
+.category-header:active { transform: scale(0.98); }
+
+.category-content { 
+    display: none; 
+    margin-top: 10px;
+    padding: 5px;
+}
+
+.category-content.show { 
+    display: block; 
+    animation: slideDown 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
+}
+
+/* ITEMS */
+.item-card {
+    background: #111; 
+    border: 1px solid #222; 
+    padding: 18px; 
+    border-radius: 15px;
+    margin-bottom: 12px; 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.item-card:hover { border-color: #444; }
+.item-card.active { border-color: var(--gold); background: #1c1c1c; }
+
+.item-card h3 { font-size: 15px; margin: 0; font-weight: 600; }
+.item-card p { font-size: 11px; margin: 4px 0 0; color: var(--gray); }
+.price { color: var(--gold); font-weight: 700; font-size: 16px; }
+
+/* GRID HORAS */
+.grid-horas { 
+    display: grid; 
+    grid-template-columns: repeat(3, 1fr); 
+    gap: 12px; 
+    margin-top: 20px; 
+}
+
+.hora-btn { 
+    padding: 15px 5px; 
+    background: #0d0d0d; 
+    border: 1px solid #333; 
+    color: white; 
+    border-radius: 12px; 
+    text-align: center; 
+    font-size: 14px; 
+    cursor: pointer; 
+    transition: 0.2s;
+}
+
+.hora-btn.selected { 
+    background: var(--gold); 
+    color: black; 
+    font-weight: 700; 
+    border-color: var(--gold);
+    transform: translateY(-2px);
+}
+
+.hora-btn.busy { 
+    opacity: 0.1; 
+    text-decoration: line-through; 
+    pointer-events: none; 
+}
+
+/* FORMULARIO */
+input { 
+    width: 100%; 
+    padding: 18px; 
+    background: #0d0d0d; 
+    border: 1px solid #333; 
+    color: white; 
+    border-radius: 12px; 
+    margin-bottom: 15px; 
+    font-family: 'Poppins', sans-serif;
+    font-size: 15px;
+    outline: none;
+    transition: 0.3s;
+}
+
+input:focus { border-color: var(--gold); }
+
+.btn-main { 
+    width: 100%; 
+    background: var(--gold); 
+    color: black; 
+    border: none; 
+    padding: 20px; 
+    font-weight: 700; 
+    border-radius: 15px; 
+    cursor: pointer;
+    text-transform: uppercase;
+    font-family: 'Poppins', sans-serif;
+    letter-spacing: 1.5px;
+    margin-top: 10px;
+    transition: 0.3s;
+}
+
+.btn-main:active { transform: scale(0.96); }
+
+/* ANIMACIONES */
+.arrow { transition: transform 0.3s ease; }
+
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-15px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.hidden { display: none; opacity: 0; }
+.section-visible { display: block !important; opacity: 1 !important; }
+/* Estilos del Modal Moderno */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    backdrop-filter: blur(8px);
+    display: none; /* Se activa con JS */
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    padding: 20px;
+}
+
+.modal-card {
+    background: #161616;
+    border: 1px solid #c5a059;
+    border-radius: 25px;
+    padding: 40px 30px;
+    text-align: center;
+    max-width: 350px;
+    width: 100%;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    animation: modalPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.modal-icon {
+    font-size: 50px;
+    color: #c5a059;
+    margin-bottom: 20px;
+}
+
+.modal-card h2 {
+    margin: 0 0 10px;
+    color: #fff;
+    font-size: 22px;
+}
+
+.modal-card p {
+    margin: 5px 0;
+    color: #aaa;
+    font-size: 16px;
+}
+
+.faltan-msg {
+    color: #c5a059 !important;
+    font-weight: 600;
+    margin-top: 10px !important;
+}
+
+.btn-modal {
+    margin-top: 30px;
+    width: 100%;
+    background: #c5a059;
+    border: none;
+    padding: 15px;
+    border-radius: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 1px;
+}
+
+@keyframes modalPop {
+    from { transform: scale(0.8); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}

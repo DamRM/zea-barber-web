@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Zea Barber - Reservas</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <header class="header">
+        <h1 class="brand">ZEA<span> BARBER</span></h1>
+    </header>
+
+    <main class="container">
+        <section id="step-1">
+            <h2 class="title">1. Selecciona tu Servicio</h2>
+            
+            <div class="list">
+                <div class="category-header" onclick="toggleCategory('cat-individuales')">
+                    <span>SERVICIOS INDIVIDUALES</span>
+                    <i class="fas fa-chevron-down arrow"></i>
+                </div>
+                <div id="cat-individuales" class="category-content">
+                    <div class="item-card" onclick="selectServicio(this, 'CORTE CLÁSICO', 17)">
+                        <div><h3>Corte Clásico</h3><p>Adulto, Mayor o Escolar</p></div>
+                        <span class="price">S/ 17</span>
+                    </div>
+                    <div class="item-card" onclick="selectServicio(this, 'FADE', 20)">
+                        <div><h3>Fade</h3><p>High / Mid / Low</p></div>
+                        <span class="price">S/ 20</span>
+                    </div>
+                    <div class="item-card" onclick="selectServicio(this, 'PREMIUM', 35)">
+                        <div><h3>Servicio Premium</h3><p>Corte, Cejas, Lavado, Styling</p></div>
+                        <span class="price">S/ 35</span>
+                    </div>
+                </div>
+
+                <div class="category-header" onclick="toggleCategory('cat-tinturacion')">
+                    <span>TINTURACIÓN</span>
+                    <i class="fas fa-chevron-down arrow"></i>
+                </div>
+                <div id="cat-tinturacion" class="category-content">
+                    <div class="item-card" onclick="selectServicio(this, 'PLATINADO', 60)">
+                        <div><h3>Platinado</h3><p>Decoloración + Matizado</p></div>
+                        <span class="price">S/ 60</span>
+                    </div>
+                    <div class="item-card" onclick="selectServicio(this, 'COLOR GLOBAL', 45)">
+                        <div><h3>Color Global</h3><p>Tinte de un solo tono</p></div>
+                        <span class="price">S/ 45</span>
+                    </div>
+                </div>
+
+                <div class="category-header" onclick="toggleCategory('cat-promos')">
+                    <span>PROMOCIONES</span>
+                    <i class="fas fa-chevron-down arrow"></i>
+                </div>
+                <div id="cat-promos" class="category-content">
+                    <div class="item-card promo-gold" onclick="selectServicio(this, 'COMBO DUO', 30)">
+                        <div><h3>Combo Dúo</h3><p>Corte + Barba simple</p></div>
+                        <span class="price">S/ 30</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="step-2" class="hidden">
+            <h2 class="title">2. Fecha y Hora</h2>
+            <input type="date" id="reserva-fecha" onchange="cargarHorarios()">
+                <div id="grid-horas" class="grid-horas"></div>
+        </section>
+
+        <section id="step-3" class="hidden">
+            <h2 class="title">3. Tus Datos</h2>
+                <input type="text" id="nombre-cliente" placeholder="Tu Nombre">
+                <input type="tel" id="tel-cliente" placeholder="WhatsApp (9 dígitos)" maxlength="9">
+                <button class="btn-main" onclick="guardarCita()">AGENDAR CITA</button>
+        </section>
+    </main>
+
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="js/app.js"></script>
+    <div id="custom-modal" class="modal-overlay">
+    <div class="modal-card">
+        <div class="modal-icon">
+            <i class="fas fa-check-circle"></i>
+        </div>
+        <h2 id="modal-title">¡Cita Registrada!</h2>
+        <p id="modal-corte-count"></p>
+        <p id="modal-faltan-count" class="faltan-msg"></p>
+        <button onclick="cerrarYRedirigir()" class="btn-modal">ENTENDIDO</button>
+    </div>
+</div>
+</body>
+</html>
