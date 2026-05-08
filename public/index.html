@@ -10,9 +10,13 @@
 </head>
 <body>
 
-    <header class="header">
-        <h1 class="brand">ZEA<span> BARBER</span></h1>
-    </header>
+<header class="header">
+    <div class="header-container">
+        <div class="header-center">
+            <img src="img/logo2.png" alt="ZEA BARBER STUDIO" class="logo-text">
+            </div>
+    </div>
+</header>
 
     <main class="container">
         <section id="step-1">
@@ -25,43 +29,215 @@
                 </div>
                 <div id="cat-individuales" class="category-content">
                     <div class="item-card" onclick="selectServicio(this, 'CORTE CLÁSICO', 17)">
-                        <div><h3>Corte Clásico</h3><p>Adulto, Mayor o Escolar</p></div>
-                        <span class="price">S/ 17</span>
+                        <div style="flex: 1;">
+                            <h3 style="margin-bottom: 8px;">Corte Clásico</h3>
+                            <p style="font-size: 10px; line-height: 1.5; color: var(--gray);">
+                                <strong style="color: var(--gold); text-transform: uppercase; font-size: 9px; display: block; margin-bottom: 4px;">Tradicional y Limpio:</strong>
+                                • Ideal para Adulto, Mayor o Escolar.<br>
+                                • Corte con tijera o máquina (un solo nivel).<br>
+                                • Perfilado de contornos naturales.<br>
+                                • Aplicación de tónico o talco.
+                            </p>
+                        </div>
+                        <span class="price" style="margin-left: 15px;">S/ 17</span>
                     </div>
+
                     <div class="item-card" onclick="selectServicio(this, 'FADE', 20)">
-                        <div><h3>Fade</h3><p>High / Mid / Low</p></div>
-                        <span class="price">S/ 20</span>
+                        <div style="flex: 1;">
+                            <h3 style="margin-bottom: 8px;">Fade (Degradado)</h3>
+                            <p style="font-size: 10px; line-height: 1.5; color: var(--gray);">
+                                <strong style="color: var(--gold); text-transform: uppercase; font-size: 9px; display: block; margin-bottom: 4px;">Estilo Moderno:</strong>
+                                • Técnica de desvanecido: High / Mid / Low.<br>
+                                • Conexión perfecta con la parte superior.<br>
+                                • Marcado de frente y patillas con navaja.<br>
+                                • Incluye producto de acabado (cera/gel).
+                            </p>
+                        </div>
+                        <span class="price" style="margin-left: 15px;">S/ 20</span>
                     </div>
+
+                    <div class="item-card" onclick="selectServicio(this, 'SERVICIO BÁSICO', 25)">
+                        <div style="flex: 1;">
+                            <h3 style="margin-bottom: 8px;">Servicio Básico</h3>
+                            <p style="font-size: 10px; line-height: 1.5; color: var(--gray);">
+                                <strong style="color: var(--gold); text-transform: uppercase; font-size: 9px; display: block; margin-bottom: 4px;">Experiencia Básica:</strong>
+                                • Corte Pro (Cualquier estilo a elección)<br>
+                                • Lavado de Cabello incluido<br>
+                                
+                            </p>
+                        </div>
+                        <span class="price" style="margin-left: 15px;">S/ 25</span>
+                    </div>
+
                     <div class="item-card" onclick="selectServicio(this, 'PREMIUM', 35)">
-                        <div><h3>Servicio Premium</h3><p>Corte, Cejas, Lavado, Styling</p></div>
-                        <span class="price">S/ 35</span>
+                        <div style="flex: 1;">
+                            <h3 style="margin-bottom: 8px;">Servicio Premium</h3>
+                            <p style="font-size: 10px; line-height: 1.5; color: var(--gray);">
+                                <strong style="color: var(--gold); text-transform: uppercase; font-size: 9px; display: block; margin-bottom: 4px;">Experiencia Premium:</strong>
+                                • Corte de Cabello (Cualquier estilo)<br>
+                                • Perfilado de Cejas con navaja<br>
+                                • Lavado de Cabello + Masaje Capilar<br>
+                                • Masajeador de hombros relajante<br>
+                                • Aplicación de Pomada y Styling profesional
+                            </p>
+                        </div>
+                        <span class="price" style="margin-left: 15px;">S/ 35</span>
                     </div>
-                </div>
 
-                <div class="category-header" onclick="toggleCategory('cat-tinturacion')">
-                    <span>TINTURACIÓN</span>
-                    <i class="fas fa-chevron-down arrow"></i>
-                </div>
-                <div id="cat-tinturacion" class="category-content">
-                    <div class="item-card" onclick="selectServicio(this, 'PLATINADO', 60)">
-                        <div><h3>Platinado</h3><p>Decoloración + Matizado</p></div>
-                        <span class="price">S/ 60</span>
+                    <div class="item-card" onclick="selectServicio(this, 'SERVICIO VIP', 45)">
+                        <div style="flex: 1;">
+                            <h3 style="margin-bottom: 8px;">Servicio VIP</h3>
+                            <p style="font-size: 10px; line-height: 1.5; color: var(--gray);">
+                                <strong style="color: var(--gold); text-transform: uppercase; font-size: 9px; display: block; margin-bottom: 4px;">La Experiencia Máxima:</strong>
+                                • Corte Pro (Cualquier estilo + Diseño)<br>
+                                • Barba completa con toalla caliente<br>
+                                • Perfilado de Cejas detallado<br>
+                                • Mascarilla negra (puntos negros)<br>
+                                • Lavado Premium y Masaje Capilar<br>
+                                • Bebida de cortesía (Agua/Gaseosa/Cerveza)
+                            </p>
+                        </div>
+                        <span class="price" style="margin-left: 15px;">S/ 45</span>
                     </div>
-                    <div class="item-card" onclick="selectServicio(this, 'COLOR GLOBAL', 45)">
-                        <div><h3>Color Global</h3><p>Tinte de un solo tono</p></div>
-                        <span class="price">S/ 45</span>
-                    </div>
                 </div>
-
                 <div class="category-header" onclick="toggleCategory('cat-promos')">
                     <span>PROMOCIONES</span>
                     <i class="fas fa-chevron-down arrow"></i>
                 </div>
                 <div id="cat-promos" class="category-content">
-                    <div class="item-card promo-gold" onclick="selectServicio(this, 'COMBO DUO', 30)">
-                        <div><h3>Combo Dúo</h3><p>Corte + Barba simple</p></div>
-                        <span class="price">S/ 30</span>
+                    <div class="item-card promo-gold" onclick="selectServicio(this, 'LIMPIEZA FACIAL COMPLETO', 40)">
+                        <div style="flex: 1;">
+                            <h3 style="margin-bottom: 8px;">Limpieza Facial Completo</h3>
+                            <p style="font-size: 10px; line-height: 1.5; color: var(--gray);">
+                                <strong style="color: var(--gold); text-transform: uppercase; font-size: 9px; display: block; margin-bottom: 4px;">Incluye:</strong>
+                                • Vaporización y Exfoliación profunda<br>
+                                • Extracción de puntos negros y grasa<br>
+                                • Masajeador de hombros relajante<br>
+                                • Mascarilla (Arcilla o Black Mask)<br>
+                                • Vapor H2O Frío y Serum<br>
+                                • Tónico hidratante final
+                            </p>
+                        </div>
+                        <span class="price" style="margin-left: 15px;">S/ 40</span>
                     </div>
+
+                    <div class="item-card promo-gold" onclick="selectServicio(this, 'PAQUETE TRANSFORMACIÓN', 60)">
+                        <div style="flex: 1;">
+                            <h3 style="margin-bottom: 8px;">Paquete Transformación</h3>
+                            <p style="font-size: 10px; line-height: 1.5; color: var(--gray);">
+                                <strong style="color: var(--gold); text-transform: uppercase; font-size: 9px; display: block; margin-bottom: 4px;">Incluye:</strong>
+                                • Corte de Cabello (Cualquier estilo)<br>
+                                • Lavado Premium + Secado y Styling<br>
+                                • Perfilado de Cejas con navaja<br>
+                                • Incluye Limpieza Facial Completa:<br>            
+                            </p>
+                        </div>
+                        <span class="price" style="margin-left: 15px;">S/ 60</span>
+                    </div>
+                    </div>
+                </div>
+                </div>
+                <div class="category-header" onclick="toggleCategory('cat-tinturacion')">
+                    <span>TINTURACIÓN</span>
+                    <i class="fas fa-chevron-down arrow"></i>
+                </div>
+                <div id="cat-tinturacion" class="category-content">
+                    <div class="item-card" onclick="selectServicio(this, 'CAMUFLAJE DE CANAS (PELO)', 35)">
+                        <div style="flex: 1;">
+                            <h3 style="margin-bottom: 8px;">Camuflaje de Canas (Pelo)</h3>
+                            <p style="font-size: 10px; line-height: 1.5; color: var(--gray);">
+                                <strong style="color: var(--gold); text-transform: uppercase; font-size: 9px; display: block; margin-bottom: 4px;">Efecto Natural:</strong>
+                                • Tinte exclusivo para hombres (American Crew).<br>
+                                • Rejuvenece el cabello de forma progresiva.<br>
+                                • Resultado natural, sin cobertura total permanente.
+                            </p>
+                        </div>
+                        <span class="price" style="margin-left: 15px;">Desde S/ 35</span>
+                    </div>
+
+                    <div class="item-card" onclick="selectServicio(this, 'CAMUFLAJE DE CANAS (BARBA)', 25)">
+                        <div style="flex: 1;">
+                            <h3 style="margin-bottom: 8px;">Camuflaje de Canas (Barba)</h3>
+                            <p style="font-size: 10px; line-height: 1.5; color: var(--gray);">
+                                <strong style="color: var(--gold); text-transform: uppercase; font-size: 9px; display: block; margin-bottom: 4px;">Estilo y Juventud:</strong>
+                                • Cobertura sutil de canas en la barba.<br>
+                                • Se desvanece suavemente con los lavados.<br>
+                                • Duración aproximada de 4 a 6 semanas.
+                            </p>
+                        </div>
+                        <span class="price" style="margin-left: 15px;">Desde S/ 25</span>
+                    </div>
+
+                    <div class="item-card" onclick="selectServicio(this, 'PLATINADO', 60)">
+                        <div style="flex: 1;">
+                            <h3 style="margin-bottom: 8px;">Platinado / Tendencia</h3>
+                            <p style="font-size: 10px; line-height: 1.5; color: var(--gray);">
+                                <strong style="color: var(--gold); text-transform: uppercase; font-size: 9px; display: block; margin-bottom: 4px;">Cambio Total:</strong>
+                                • Decoloración global de alta protección.<br>
+                                • Matizado profesional para tonos grises o blancos.<br>
+                                • Incluye tratamiento post-color.
+                            </p>
+                        </div>
+                        <span class="price" style="margin-left: 15px;">Desde S/ 60</span>
+                    </div>
+                </div>
+                <div class="category-header" onclick="toggleCategory('cat-extras')">
+                    <span>SERVICIOS EXTRAS</span>
+                    <i class="fas fa-chevron-down arrow"></i>
+                </div>
+                <div id="cat-extras" class="category-content">
+                    <div class="item-card" onclick="selectServicio(this, 'PERFILADO DE BARBA', 10)">
+                        <div style="flex: 1;">
+                            <h3 style="margin-bottom: 8px;">Perfilado de Barba</h3>
+                            <p style="font-size: 10px; line-height: 1.5; color: var(--gray);">
+                                <strong style="color: var(--gold); text-transform: uppercase; font-size: 9px; display: block; margin-bottom: 4px;">Incluye:</strong>
+                                • Marcado de líneas con navaja profesional.<br>
+                                • Aplicación de gel de afeitar y aftershave.<br>
+                                • Rebajado de volumen a gusto del cliente.
+                            </p>
+                        </div>
+                        <span class="price" style="margin-left: 15px;">S/ 10</span>
+                    </div>
+
+                    <div class="item-card" onclick="selectServicio(this, 'DEFINICIÓN DE CEJAS', 5)">
+                        <div style="flex: 1;">
+                            <h3 style="margin-bottom: 8px;">Definición de Cejas</h3>
+                            <p style="font-size: 10px; line-height: 1.5; color: var(--gray);">
+                                <strong style="color: var(--gold); text-transform: uppercase; font-size: 9px; display: block; margin-bottom: 4px;">Incluye:</strong>
+                                • Limpieza de exceso de vello con navaja.<br>
+                                • Perfilado detallado según la forma del rostro.<br>
+                                • Acabado limpio y definido.
+                            </p>
+                        </div>
+                        <span class="price" style="margin-left: 15px;">S/ 5</span>
+                    </div>
+
+                    <div class="item-card" onclick="selectServicio(this, 'ONDULACIONES', 60)">
+                        <div style="flex: 1;">
+                            <h3 style="margin-bottom: 8px;">Ondulaciones</h3>
+                            <p style="font-size: 10px; line-height: 1.5; color: var(--gray);">
+                                <strong style="color: var(--gold); text-transform: uppercase; font-size: 9px; display: block; margin-bottom: 4px;">Previa Evaluación:</strong>
+                                • Tratamiento para dar textura y ondas al cabello.<br>
+                                • Incluye lavado y productos de protección.<br>
+                                • El precio final depende de la evaluación del cabello.
+                            </p>
+                        </div>
+                        <span class="price" style="margin-left: 15px;">Desde S/ 60</span>
+                    </div>
+
+                    <div class="item-card" onclick="selectServicio(this, 'ALISADOS SEMIPERMANENTES', 60)">
+                        <div style="flex: 1;">
+                            <h3 style="margin-bottom: 8px;">Alisados Semipermanentes</h3>
+                            <p style="font-size: 10px; line-height: 1.5; color: var(--gray);">
+                                <strong style="color: var(--gold); text-transform: uppercase; font-size: 9px; display: block; margin-bottom: 4px;">Incluye:</strong>
+                                • Tratamiento completo de laciado profesional.<br>
+                                • Reduce el frizz y aporta brillo intenso.<br>
+                                • Acabado suave y manejable por semanas.
+                            </p>
+                        </div>
+                        <span class="price" style="margin-left: 15px;">S/ 60</span>
+                    </div>
+
                 </div>
             </div>
         </section>
@@ -84,15 +260,15 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
     <script src="js/app.js"></script>
     <div id="custom-modal" class="modal-overlay">
-    <div class="modal-card">
-        <div class="modal-icon">
-            <i class="fas fa-check-circle"></i>
+        <div class="modal-card">
+            <div class="modal-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h2 id="modal-title">¡Cita Registrada!</h2>
+            <p id="modal-corte-count"></p>
+            <p id="modal-faltan-count" class="faltan-msg"></p>
+            <button onclick="cerrarYRedirigir()" class="btn-modal">ENTENDIDO</button>
         </div>
-        <h2 id="modal-title">¡Cita Registrada!</h2>
-        <p id="modal-corte-count"></p>
-        <p id="modal-faltan-count" class="faltan-msg"></p>
-        <button onclick="cerrarYRedirigir()" class="btn-modal">ENTENDIDO</button>
     </div>
-</div>
 </body>
 </html>

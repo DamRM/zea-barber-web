@@ -277,3 +277,53 @@ input:focus { border-color: var(--gold); }
     from { transform: scale(0.8); opacity: 0; }
     to { transform: scale(1); opacity: 1; }
 }
+/* --- Header Minimalista Centrado --- */
+.header {
+    background: #0a0a0a; /* Negro puro */
+    padding: 15px 0;
+    border-bottom: 1px solid #222;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.header-container {
+    display: flex;
+    justify-content: center; /* Centrado horizontal absoluto */
+    align-items: center;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.header-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.logo-text {
+    height: 40px; /* Tamaño ligeramente mayor al estar solo */
+    width: auto;
+    object-fit: contain;
+    display: block;
+}
+
+.admin-label {
+    color: #c5a059;
+    font-size: 10px;
+    font-weight: bold;
+    letter-spacing: 2px;
+    margin-top: 5px;
+}
+
+/* AJUSTE PARA CELULARES */
+@media (max-width: 480px) {
+    .header {
+        padding: 5px 0;
+    }
+    .logo-text {
+        height: 70px; /* Tamaño ajustado para que no sature la pantalla del móvil */
+    }
+}
