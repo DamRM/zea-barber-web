@@ -13,26 +13,28 @@ if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 let vistaActual = 'dia';
 
-// FUNCION ORIGINAL INTACTA
-function validarAcceso() {
-    const pass = document.getElementById('admin-pass').value;
-    if (pass === "123") {
-        document.getElementById('login-container').style.display = 'none';
-        document.getElementById('admin-panel').style.display = 'block';
-        const hoy = new Date().toLocaleDateString('en-CA', {timeZone: 'America/Lima'});
-        document.getElementById('filtro-admin').value = hoy;
-        verCitas();
-    } else {
-        document.getElementById('login-error').style.display = 'block';
-    }
-}
+// VALIDACIÓN DE ACCESO DESDE FIRESTORE
+async function validarAcceso() {
+    const passIngresada = document.getElementById('admin-pass').value;
+    const loginError = document.getElementById('login-error');
 
-// FUNCION ORIGINAL INTACTA
-function cambiarTab(modo) {
-    vistaActual = modo;
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    document.getElementById(`tab-${modo}`).classList.add('active');
-    verCitas();
+    try {
+        const doc = await db.collection("config").doc("admin").get();
+        
+        if (doc.exists && doc.data().pass === passIngresada) {
+            document.getElementById('login-container').style.display = 'none';
+            document.getElementById('admin-panel').style.display = 'block';
+            const hoy = new Date().toLocaleDateString('en-CA', {timeZone: 'America/Lima'});
+            document.getElementById('filtro-admin').value = hoy;
+            verCitas();
+        } else {
+            loginError.style.display = 'block';
+            loginError.innerText = "Clave incorrecta";
+        }
+    } catch (error) {
+        console.error("Error:", error);
+        alert("Error al conectar con el servidor.");
+    }
 }
 
 // FUNCION ACTUALIZADA (Solo añadí el botón de aviso, no borré nada)
@@ -141,3 +143,27 @@ async function marcarAtendido(id, est) {
         } catch (e) { alert("Error al actualizar"); }
     }
 }
+// FUNCIÓN PARA CAMBIAR ENTRE DÍA, SEMANA Y MES
+function cambiarTab(tipo) {
+    vistaActual = tipo;
+    
+    // Cambiar estilo de los botones
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    document.getElementById(`tab-${tipo}`).classList.add('active');
+    
+    // Recargar las citas con la nueva vista
+    verCitas();
+}
+
+// ESTO ASEGURA QUE AL CARGAR EL ADMIN POR PRIMERA VEZ SE VEA EL DÍA ACTUAL
+window.onload = function() {
+    const filtro = document.getElementById('filtro-admin');
+    if (filtro) {
+        const hoy = new Date().toLocaleDateString('en-CA', {timeZone: 'America/Lima'});
+        filtro.value = hoy;
+        // Solo ejecuta verCitas si ya te logueaste
+        if (document.getElementById('admin-panel').style.display === 'block') {
+            verCitas();
+        }
+    }
+};

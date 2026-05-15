@@ -327,3 +327,17 @@ input:focus { border-color: var(--gold); }
         height: 70px; /* Tamaño ajustado para que no sature la pantalla del móvil */
     }
 }
+/* ESTILO PARA EL TIEMPO DE DURACIÓN */
+.service-duration {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px; /* Más pequeño que el nombre */
+    color: #888;     /* Gris para que no compita con el nombre */
+    margin-top: 4px;
+}
+
+.service-duration i {
+    color: var(--gold); /* El icono de reloj en dorado */
+    font-size: 10px;
+}
