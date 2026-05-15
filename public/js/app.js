@@ -71,21 +71,37 @@ async function cargarHorarios() {
     const grid = document.getElementById('grid-horas');
     grid.innerHTML = "<p>Buscando turnos...</p>";
 
-    try {
-        // CONSULTA SIN ORDERBY PARA EVITAR ERROR DE ÍNDICE
-        const snap = await db.collection("citas")
-                             .where("fecha", "==", fechaInput)
-                             .get();
-        
-        const ocupadas = snap.docs.map(doc => doc.data().hora);
+    // Lista completa de todas las horas posibles
+    const todasLasHoras = ["10:00 AM", "11:00 AM", "12:00 PM", "01:00 PM", "03:00 PM", "04:00 PM", "05:00 PM", "06:00 PM", "07:00 PM", "08:00 PM", "09:00 PM", "10:00 PM"];
+    
+    // Definimos qué horas son válidas según el día
+    const diaSemana = fechaSeleccionada.getDay(); // 0=Dom, 3=Mie
+    let horasPermitidas = [];
 
-        const horas = ["10:00 AM", "11:00 AM", "12:00 PM", "01:00 PM", "03:00 PM", "04:00 PM", "05:00 PM", "06:00 PM", "07:00 PM", "08:00 PM", "09:00 PM", "10:00 PM"];
-        
+    if (diaSemana === 3) { // MIÉRCOLES
+        horasPermitidas = ["10:00 AM", "11:00 AM", "12:00 PM", "01:00 PM"];
+    } else if (diaSemana === 0) { // DOMINGO
+        horasPermitidas = ["10:00 AM", "11:00 AM", "12:00 PM", "01:00 PM", "03:00 PM", "04:00 PM", "05:00 PM", "06:00 PM"];
+    } else { // DÍAS NORMALES
+        horasPermitidas = [...todasLasHoras];
+    }
+
+    try {
+        const snap = await db.collection("citas").where("fecha", "==", fechaInput).get();
+        const yaReservadas = snap.docs.map(doc => doc.data().hora);
+
         grid.innerHTML = "";
-        horas.forEach(h => {
+        todasLasHoras.forEach(h => {
             const btn = document.createElement('div');
-            btn.className = `hora-btn ${ocupadas.includes(h) ? 'busy' : ''}`;
+            
+            // LÓGICA DE NUBLADO:
+            // Está ocupada si: ya la reservaron O si no está en las permitidas de ese día
+            const estaFueraDeHorario = !horasPermitidas.includes(h);
+            const estaReservada = yaReservadas.includes(h);
+            
+            btn.className = `hora-btn ${(estaFueraDeHorario || estaReservada) ? 'busy' : ''}`;
             btn.innerText = h;
+
             btn.onclick = () => {
                 if (!btn.classList.contains('busy')) {
                     document.querySelectorAll('.hora-btn').forEach(b => b.classList.remove('selected'));
