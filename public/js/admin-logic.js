@@ -95,32 +95,38 @@ async function verCitas() {
             const urlWsp = `https://wa.me/51${c.whatsapp}?text=${mensajeAviso}`;
             // --------------------------------------------
 
-            html += `
-                <div class="appointment-card ${esAtendido ? 'atendido' : ''}">
-                    <div class="appointment-info">
-                        <div class="time-badge">
-                            <div>
-                                <span>${c.hora}</span>
-                                <small>${c.fecha.split('-').reverse().join('/')}</small>
-                            </div>
-                            <a href="${urlWsp}" target="_blank" class="wsp-icon-admin" title="Avisar al cliente">
-                                <i class="fab fa-whatsapp"></i>
-                            </a>
-                        </div>
-                        <div class="client-name">${c.cliente}</div>
-                        <div class="service-details">
-                            <strong style="color: var(--primary);">BARBERO: ${c.barbero || 'ZEA'}</strong><br>
-                            ${c.servicio} • S/ ${c.precio}
-                        </div>
-                        <div class="promo-tag ${c.posicionCiclo % 5 === 0 ? 'tag-promo' : 'tag-normal'}">
-                            ${etiqueta}
-                        </div>
-                    </div>
-                    <button onclick="marcarAtendido('${c.id}', '${c.estado}')" class="btn-status ${esAtendido ? 'btn-done' : 'btn-pending'}">
-                        ${esAtendido ? 'ATENDIDO' : 'ATENDER'}
-                    </button>
+          html += `
+            <div class="appointment-card ${esAtendido ? 'atendido' : ''}" style="position: relative;">
+                
+                <div onclick="liberarCita('${c.id}', '${c.hora}')" 
+                     style="position: absolute; top: 12px; right: 12px; color: #ff4444; cursor: pointer; font-size: 18px; z-index: 100; line-height: 1;">
+                    <i class="fas fa-times-circle"></i>
                 </div>
-            `;
+
+                <div class="appointment-info">
+                    <div class="time-badge">
+                        <div>
+                            <span>${c.hora}</span>
+                            <small>${c.fecha.split('-').reverse().join('/')}</small>
+                        </div>
+                        <a href="${urlWsp}" target="_blank" class="wsp-icon-admin" title="Avisar al cliente">
+                            <i class="fab fa-whatsapp"></i>
+                        </a>
+                    </div>
+                    <div class="client-name">${c.cliente}</div>
+                    <div class="service-details">
+                        <strong style="color: var(--primary);">BARBERO: ${c.barbero || 'ZEA'}</strong><br>
+                        ${c.servicio} • S/ ${c.precio}
+                    </div>
+                    <div class="promo-tag ${c.posicionCiclo % 5 === 0 ? 'tag-promo' : 'tag-normal'}">
+                        ${etiqueta}
+                    </div>
+                </div>
+                <button onclick="marcarAtendido('${c.id}', '${c.estado}')" class="btn-status ${esAtendido ? 'btn-done' : 'btn-pending'}">
+                    ${esAtendido ? 'ATENDIDO' : 'ATENDER'}
+                </button>
+            </div>
+        `;
         });
 
         contenedor.innerHTML = html;
@@ -154,7 +160,16 @@ function cambiarTab(tipo) {
     // Recargar las citas con la nueva vista
     verCitas();
 }
-
+async function liberarCita(id, hora) {
+    if (confirm(`¿Eliminar cita de las ${hora}? El horario quedará libre.`)) {
+        try {
+            await db.collection("citas").doc(id).delete();
+            verCitas(); 
+        } catch (e) {
+            alert("Error al liberar");
+        }
+    }
+}
 // ESTO ASEGURA QUE AL CARGAR EL ADMIN POR PRIMERA VEZ SE VEA EL DÍA ACTUAL
 window.onload = function() {
     const filtro = document.getElementById('filtro-admin');

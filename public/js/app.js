@@ -51,73 +51,87 @@ function selectServicio(el, nombre, precio) {
     irA('step-2');
 }
 
+// ... (Tus config de Firebase y variables iniciales se mantienen igual)
+
 async function cargarHorarios() {
-    const fechaInput = document.getElementById('reserva-fecha').value;
-    if (!fechaInput) return;
-
-    // 2. VALIDACIÓN DE SEGURIDAD (Por si burlan el calendario)
-    const hoy = new Date();
-    hoy.setHours(0, 0, 0, 0);
-    const partes = fechaInput.split('-');
-    const fechaSeleccionada = new Date(partes[0], partes[1] - 1, partes[2]);
-
-    if (fechaSeleccionada < hoy) {
-        alert("⚠️ No puedes agendar en una fecha que ya pasó.");
-        document.getElementById('reserva-fecha').value = "";
-        return;
-    }
-
-    reserva.fecha = fechaInput;
+    const fechaSel = document.getElementById('reserva-fecha').value;
     const grid = document.getElementById('grid-horas');
-    grid.innerHTML = "<p>Buscando turnos...</p>";
-
-    // Lista completa de todas las horas posibles
-    const todasLasHoras = ["10:00 AM", "11:00 AM", "12:00 PM", "01:00 PM", "03:00 PM", "04:00 PM", "05:00 PM", "06:00 PM", "07:00 PM", "08:00 PM", "09:00 PM", "10:00 PM"];
     
-    // Definimos qué horas son válidas según el día
-    const diaSemana = fechaSeleccionada.getDay(); // 0=Dom, 3=Mie
-    let horasPermitidas = [];
+    if (!fechaSel) return;
+    reserva.fecha = fechaSel;
 
-    if (diaSemana === 3) { // MIÉRCOLES
-        horasPermitidas = ["10:00 AM", "11:00 AM", "12:00 PM", "01:00 PM"];
-    } else if (diaSemana === 0) { // DOMINGO
-        horasPermitidas = ["10:00 AM", "11:00 AM", "12:00 PM", "01:00 PM", "03:00 PM", "04:00 PM", "05:00 PM", "06:00 PM"];
-    } else { // DÍAS NORMALES
-        horasPermitidas = [...todasLasHoras];
-    }
+    grid.innerHTML = "<p style='grid-column: 1/-1; text-align:center;'>Cargando horarios...</p>";
 
     try {
-        const snap = await db.collection("citas").where("fecha", "==", fechaInput).get();
-        const yaReservadas = snap.docs.map(doc => doc.data().hora);
+        const fechaObj = new Date(fechaSel + 'T00:00:00');
+        const diaSemana = fechaObj.getDay(); 
 
-        grid.innerHTML = "";
-        todasLasHoras.forEach(h => {
-            const btn = document.createElement('div');
-            
-            // LÓGICA DE NUBLADO:
-            // Está ocupada si: ya la reservaron O si no está en las permitidas de ese día
-            const estaFueraDeHorario = !horasPermitidas.includes(h);
-            const estaReservada = yaReservadas.includes(h);
-            
-            btn.className = `hora-btn ${(estaFueraDeHorario || estaReservada) ? 'busy' : ''}`;
-            btn.innerText = h;
+        const snapshot = await db.collection("citas")
+            .where("fecha", "==", fechaSel)
+            .get();
 
-            btn.onclick = () => {
-                if (!btn.classList.contains('busy')) {
-                    document.querySelectorAll('.hora-btn').forEach(b => b.classList.remove('selected'));
-                    btn.classList.add('selected');
-                    reserva.hora = h;
-                    document.getElementById('step-3').classList.add('section-visible');
-                    irA('step-3');
-                }
-            };
-            grid.appendChild(btn);
-        });
-    } catch (error) {
-        console.error("Error:", error);
-        grid.innerHTML = "<p>Error al cargar horarios.</p>";
+        // IMPORTANTE: Asegúrate que en Firebase las horas guardadas también tengan el formato "HH:MM AM/PM"
+        const horasOcupadas = snapshot.docs.map(doc => doc.data().hora);
+        let html = "";
+
+        // Bucle de 9 AM a 10 PM (22:00)
+        for (let i = 9; i <= 22; i++) {
+            
+            // Lógica AM/PM
+            let periodo = i >= 12 ? 'PM' : 'AM';
+            let hora12 = i % 12;
+            if (hora12 === 0) hora12 = 12;
+            const horaFormateada = `${hora12 < 10 ? '0' + hora12 : hora12}:00 ${periodo}`;
+            
+            let visible = true;
+
+            // --- REGLAS DE HORARIO ---
+            if (i === 14) { visible = false; } // Almuerzo
+            else if (diaSemana === 6) { visible = true; } // Sábado todo el día
+            else if (diaSemana === 3) { if (i < 10 || i > 13) visible = false; } // Miércoles
+            else if (diaSemana === 0) { if (i < 10 || i > 18) visible = false; } // Domingo
+            else { if (i < 10 || i > 22) visible = false; } // L-V
+
+            if (visible) {
+                const estaOcupada = horasOcupadas.includes(horaFormateada);
+                // AQUÍ ESTABA EL ERROR: Aseguramos que pase 'horaFormateada' con comillas
+                html += `
+                    <button 
+                        class="hora-btn ${estaOcupada ? 'ocupado' : ''}" 
+                        onclick="${estaOcupada ? '' : `seleccionarHora('${horaFormateada}', this)`}"
+                        ${estaOcupada ? 'disabled' : ''}>
+                        ${horaFormateada}
+                    </button>
+                `;
+            }
+        }
+
+        grid.innerHTML = html;
+    } catch (e) {
+        console.error("Error en Firebase:", e);
+        grid.innerHTML = "Error al cargar horarios.";
     }
 }
+
+// ESTA FUNCIÓN ES LA QUE ACTIVA EL PASO 3
+function seleccionarHora(hora, btn) {
+    reserva.hora = hora; // Guarda "09:00 AM" por ejemplo
+    
+    // Quitar selección previa
+    document.querySelectorAll('.hora-btn').forEach(b => b.classList.remove('selected'));
+    
+    // Marcar el actual
+    btn.classList.add('selected');
+
+    // MOSTRAR PASO 3 (Tus datos)
+    const step3 = document.getElementById('step-3');
+    if (step3) {
+        step3.classList.remove('hidden');
+        irA('step-3');
+    }
+}
+
+// ... (El resto de tus funciones guardarCita e irA se mantienen igual)
 
 async function guardarCita() {
     const nombre = document.getElementById('nombre-cliente').value.trim();
