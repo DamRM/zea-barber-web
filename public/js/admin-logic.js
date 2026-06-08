@@ -37,7 +37,7 @@ async function validarAcceso() {
     }
 }
 
-// FUNCION ACTUALIZADA (Solo añadí el botón de aviso, no borré nada)
+// FUNCION CORREGIDA PARA MOSTRAR Y SUMAR LOS DESCUENTOS REALES
 async function verCitas() {
     const contenedor = document.getElementById('lista-citas');
     const fechaFiltro = document.getElementById('filtro-admin').value;
@@ -71,7 +71,26 @@ async function verCitas() {
         let citas = [];
         snapshot.forEach(doc => citas.push({ id: doc.id, ...doc.data() }));
         
-        citas.sort((a, b) => a.fecha.localeCompare(b.fecha) || a.hora.localeCompare(b.hora));
+        // ORDENAMIENTO CRONOLÓGICO REAL (Entendiendo AM y PM)
+        citas.sort((a, b) => {
+            // 1. Primero ordena por fecha
+            if (a.fecha !== b.fecha) {
+                return a.fecha.localeCompare(b.fecha);
+            }
+            
+            // 2. Si la fecha es la misma, convierte la hora a formato 24h para ordenarlas
+            const convertirMinutos = (horaStr) => {
+                if (!horaStr) return 0;
+                let [hora, periodo] = horaStr.split(' ');
+                let [h, m] = hora.split(':');
+                h = parseInt(h);
+                if (periodo === 'PM' && h !== 12) h += 12;
+                if (periodo === 'AM' && h === 12) h = 0;
+                return (h * 60) + parseInt(m);
+            };
+
+            return convertirMinutos(a.hora) - convertirMinutos(b.hora);
+        });
 
         let html = "";
         let tC = 0; 
@@ -86,11 +105,18 @@ async function verCitas() {
 
         citas.forEach(c => {
             const esAtendido = c.estado === 'ATENDIDO';
-            if (esAtendido) { tC++; tG += parseFloat(c.precio || 0); }
+            
+            // CORRECCIÓN: Si existe 'precioCobrado' usa ese valor con descuento, si no, usa el original.
+            const precioRealEfectivo = c.precioCobrado !== undefined ? parseFloat(c.precioCobrado) : parseFloat(c.precio || 0);
+
+            if (esAtendido) { 
+                tC++; 
+                tG += precioRealEfectivo; // Suma la ganancia real cobrada
+            }
 
             const etiqueta = c.posicionCiclo % 5 === 0 ? "¡PREMIO!" : `Corte #${c.posicionCiclo}`;
             
-            // --- NUEVO: Lógica del Aviso por WhatsApp ---
+            // --- Lógica del Aviso por WhatsApp ---
             const mensajeAviso = encodeURIComponent(`¡Hola ${c.cliente}! 💈 Te saludamos de Zea Barber. Te recordamos tu cita de hoy a las ${c.hora}. Por favor, trata de estar unos minutos antes. ¡Te esperamos!`);
             const urlWsp = `https://wa.me/51${c.whatsapp}?text=${mensajeAviso}`;
             // --------------------------------------------
@@ -116,7 +142,7 @@ async function verCitas() {
                     <div class="client-name">${c.cliente}</div>
                     <div class="service-details">
                         <strong style="color: var(--primary);">BARBERO: ${c.barbero || 'ZEA'}</strong><br>
-                        ${c.servicio} • S/ ${c.precio}
+                        ${c.servicio} • S/ ${precioRealEfectivo} ${c.precioCobrado !== undefined && c.precioCobrado < c.precio ? `<span style="text-decoration: line-through; color: #666; font-size: 11px; margin-left: 5px;">S/ ${c.precio}</span>` : ''}
                     </div>
                     <div class="promo-tag ${c.posicionCiclo % 5 === 0 ? 'tag-promo' : 'tag-normal'}">
                         ${etiqueta}
@@ -149,6 +175,7 @@ async function marcarAtendido(id, est) {
         } catch (e) { alert("Error al actualizar"); }
     }
 }
+
 // FUNCIÓN PARA CAMBIAR ENTRE DÍA, SEMANA Y MES
 function cambiarTab(tipo) {
     vistaActual = tipo;
@@ -160,6 +187,7 @@ function cambiarTab(tipo) {
     // Recargar las citas con la nueva vista
     verCitas();
 }
+
 async function liberarCita(id, hora) {
     if (confirm(`¿Eliminar cita de las ${hora}? El horario quedará libre.`)) {
         try {
@@ -170,6 +198,7 @@ async function liberarCita(id, hora) {
         }
     }
 }
+
 // ESTO ASEGURA QUE AL CARGAR EL ADMIN POR PRIMERA VEZ SE VEA EL DÍA ACTUAL
 window.onload = function() {
     const filtro = document.getElementById('filtro-admin');

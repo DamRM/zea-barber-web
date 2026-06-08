@@ -155,10 +155,24 @@ header h1 span { color: var(--gold); }
     transform: translateY(-2px);
 }
 
-.hora-btn.busy { 
-    opacity: 0.1; 
-    text-decoration: line-through; 
-    pointer-events: none; 
+/* MODIFICACIÓN: Estilo unificado para nublar las horas ocupadas */
+.hora-btn.ocupado,
+.hora-btn.busy, 
+.hora-btn:disabled { 
+    background: #111111 !important;
+    color: #444444 !important;
+    border: 1px solid #222222 !important;
+    opacity: 0.4;
+    pointer-events: none;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+.hora-btn.ocupado:hover,
+.hora-btn.busy:hover,
+.hora-btn:disabled:hover {
+    background: #111111 !important;
+    color: #444444 !important;
 }
 
 /* FORMULARIO */
@@ -211,6 +225,7 @@ input:focus { border-color: var(--gold); }
 
 .hidden { display: none; opacity: 0; }
 .section-visible { display: block !important; opacity: 1 !important; }
+
 /* Estilos del Modal Moderno */
 .modal-overlay {
     position: fixed;
@@ -218,7 +233,7 @@ input:focus { border-color: var(--gold); }
     width: 100%; height: 100%;
     background: rgba(0, 0, 0, 0.9);
     backdrop-filter: blur(8px);
-    display: none; /* Se activa con JS */
+    display: none; 
     justify-content: center;
     align-items: center;
     z-index: 9999;
@@ -277,9 +292,10 @@ input:focus { border-color: var(--gold); }
     from { transform: scale(0.8); opacity: 0; }
     to { transform: scale(1); opacity: 1; }
 }
+
 /* --- Header Minimalista Centrado --- */
 .header {
-    background: #0a0a0a; /* Negro puro */
+    background: #0a0a0a; 
     padding: 15px 0;
     border-bottom: 1px solid #222;
     position: sticky;
@@ -289,7 +305,7 @@ input:focus { border-color: var(--gold); }
 
 .header-container {
     display: flex;
-    justify-content: center; /* Centrado horizontal absoluto */
+    justify-content: center; 
     align-items: center;
     width: 100%;
     max-width: 1200px;
@@ -304,7 +320,7 @@ input:focus { border-color: var(--gold); }
 }
 
 .logo-text {
-    height: 40px; /* Tamaño ligeramente mayor al estar solo */
+    height: 40px; 
     width: auto;
     object-fit: contain;
     display: block;
@@ -324,20 +340,49 @@ input:focus { border-color: var(--gold); }
         padding: 5px 0;
     }
     .logo-text {
-        height: 70px; /* Tamaño ajustado para que no sature la pantalla del móvil */
+        height: 70px; 
     }
 }
+
 /* ESTILO PARA EL TIEMPO DE DURACIÓN */
 .service-duration {
     display: flex;
     align-items: center;
     gap: 6px;
-    font-size: 11px; /* Más pequeño que el nombre */
-    color: #888;     /* Gris para que no compita con el nombre */
+    font-size: 11px; 
+    color: #888;     
     margin-top: 4px;
 }
 
 .service-duration i {
-    color: var(--gold); /* El icono de reloj en dorado */
-    font-size: 10px;
+    color: var(--gold); 
+    font-size: 10px;}
+/* NOTA DE HORARIOS EXTRAORDINARIOS */
+.horario-nota {
+    background: #1a1105; /* Fondo marrón/dorado muy oscuro */
+    border: 1px solid var(--gold); /* Borde dorado */
+    border-radius: 12px;
+    padding: 15px;
+    margin-top: 20px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    animation: fadeIn 0.5s ease;
+}
+
+.horario-nota i {
+    color: var(--gold);
+    font-size: 18px;
+    margin-top: 3px;
+}
+
+.horario-nota p {
+    margin: 0;
+    color: #e0e0e0;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.horario-nota strong {
+    color: var(--white);
 }
