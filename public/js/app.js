@@ -14,7 +14,6 @@ const db = firebase.firestore();
 let reserva = { barbero: "ZEA", servicio: "", precio: 0, fecha: "", hora: "" };
 let urlWhatsAppFinal = ""; 
 
-// 1. BLOQUEO DE FECHAS PASADAS (Visualmente en el calendario)
 window.onload = function() {
     const hoy = new Date().toLocaleDateString('en-CA', {timeZone: 'America/Lima'});
     const inputFecha = document.getElementById('reserva-fecha');
@@ -41,7 +40,6 @@ function toggleCategory(id) {
     if (!estaAbierto) content.classList.add('show');
 }
 
-// HORARIOS DINÁMICOS AL CAMBIAR DE SERVICIO
 function selectServicio(el, nombre, precio) {
     document.querySelectorAll('.item-card').forEach(card => card.classList.remove('active'));
     el.classList.add('active');
@@ -58,7 +56,6 @@ function selectServicio(el, nombre, precio) {
     irA('step-2');
 }
 
-// FUNCIÓN AUXILIAR PARA FORMATEAR HORAS EN LOS BUCLES
 function obtenerHoraFormateada(iterador) {
     let periodo = iterador >= 12 ? 'PM' : 'AM';
     let hora12 = iterador % 12;
@@ -72,7 +69,6 @@ async function cargarHorarios() {
     
     if (!fechaSel) return;
 
-    // 🔒 CANDADO DE SEGURIDAD CRÍTICO: Evita cargar u otorgar horas de días pasados
     const hoyLima = new Date().toLocaleDateString('en-CA', {timeZone: 'America/Lima'});
     if (fechaSel < hoyLima) {
         grid.innerHTML = "<p style='grid-column: 1/-1; text-align:center; color:#ff4d4d; font-weight:600;'>No puedes seleccionar una fecha pasada.</p>";
@@ -84,6 +80,18 @@ async function cargarHorarios() {
     grid.innerHTML = "<p style='grid-column: 1/-1; text-align:center;'>Cargando horarios...</p>";
 
     try {
+        const docBloqueo = await db.collection("dias_bloqueados").doc(fechaSel).get();
+        if (docBloqueo.exists) {
+            grid.innerHTML = `
+                <div style="grid-column: 1/-1; background: #fee2e2; border: 1px solid #f87171; border-radius: 12px; padding: 20px; text-align: center; color: #991b1b;">
+                    <i class="fas fa-ban" style="font-size: 24px; margin-bottom: 8px; display: block;"></i>
+                    <strong>¡Lo sentimos! No estamos atendiendo este día.</strong>
+                    <p style="font-size: 12px; margin: 5px 0 0 0;">La fecha seleccionada se encuentra bloqueada y las horas no están disponibles para reservas.</p>
+                </div>
+            `;
+            return;
+        }
+
         const fechaObj = new Date(fechaSel + 'T00:00:00');
         const diaSemana = fechaObj.getDay(); 
 
@@ -111,15 +119,13 @@ async function cargarHorarios() {
             }
             else if (servicioGuardado === "ZEA SELECT" || servicioGuardado === "PRESTIGE GROOMING" || 
                      servicioGuardado === "ESSENTIAL GROOMING" || servicioGuardado === "LUXURY GROOMING EXPERIENCE" ||
-                     servicioGuardado === "ONDULACIONES") {
+                     servicioGuardado === "ONDULACIONES" || servicioGuardado === "CORTE & BARBA PREMIUM") {
                 const horaSig1 = obtenerHoraFormateada(hNum + 1);
                 if (!horasOcupadas.includes(horaSig1)) horasOcupadas.push(horaSig1);
             }
         });
-
         let html = "";
 
-        // Bucle corre estrictamente de 9 AM hasta las 9 PM (21:00)
         for (let i = 9; i <= 21; i++) {
             const horaFormateada = obtenerHoraFormateada(i);
             let visible = true;
@@ -128,7 +134,7 @@ async function cargarHorarios() {
             else if (diaSemana === 6) { visible = true; } 
             else if (diaSemana === 3) { if (i < 10 || i > 13) visible = false; } 
             else if (diaSemana === 0) { if (i < 10 || i > 18) visible = false; } 
-            else { if (i < 10 || i > 21) visible = false; } // Tope de días regulares a 21 (9 PM)
+            else { if (i < 10 || i > 21) visible = false; } 
 
             if (visible) {
                 let estaOcupada = horasOcupadas.includes(horaFormateada);
@@ -140,7 +146,6 @@ async function cargarHorarios() {
                         const horaSiguiente1 = obtenerHoraFormateada(i + 1);
                         const horaSiguiente2 = obtenerHoraFormateada(i + 2);
                         
-                        // Si cierra a las 21:00, no se puede pedir este servicio a las 20:00 (i=20) ni 21:00 (i=21)
                         if (i === 12 || i === 13 || i === 20 || i === 21 || 
                             horasOcupadas.includes(horaSiguiente1) || 
                             horasOcupadas.includes(horaSiguiente2)) {
@@ -152,7 +157,6 @@ async function cargarHorarios() {
                              servicioActual === "ONDULACIONES") {
                         const horaSiguiente1 = obtenerHoraFormateada(i + 1);
                         
-                        // No se puede pedir un servicio de 2 horas en la última hora disponible (21:00)
                         if (i === 13 || i === 21 || horasOcupadas.includes(horaSiguiente1)) {
                             estaOcupada = true;
                         }
@@ -177,15 +181,11 @@ async function cargarHorarios() {
     }
 }
 
-// ESTA FUNCIÓN ES LA QUE ACTIVA EL PASO 3
 function seleccionarHora(hora, btn) {
     reserva.hora = hora; 
     document.querySelectorAll('.hora-btn').forEach(b => b.classList.remove('selected'));
-    
-    // Marcar el actual
     btn.classList.add('selected');
 
-    // MOSTRAR PASO 3 (Tus datos)
     const step3 = document.getElementById('step-3');
     if (step3) {
         step3.classList.remove('hidden');
@@ -238,18 +238,32 @@ async function guardarCita() {
             faltanParaPremio = 0;
         }
 
+        let precioOriginal = reserva.precio;
+        let precioFinal = precioOriginal;
         let promoTexto = `Faltan ${faltanParaPremio} para tu próximo premio (Promos válidas de Lunes a Jueves)`;
-        if (mostrarPos % 5 === 0) {
-            promoTexto = "¡Felicidades! Cumpliste un ciclo de 5 servicios. Reclama tu premio en la barbería de Lunes a Jueves.";
-        }
-        if (mostrarPos === 20) {
-            promoTexto = "¡Felicidades! Llegaste al servicio #20. Tienes 50% dsc. en Luxury o Corte Regular Gratis (Lunes a Jueves).";
+
+        if (mostrarPos === 5) {
+            precioFinal = precioOriginal * 0.75;
+            promoTexto = "¡Felicidades! Llegaste al corte #5. Tienes un 25% de Descuento aplicado (Válido de Lunes a Jueves).";
+        } 
+        else if (mostrarPos === 10) {
+            precioFinal = precioOriginal * 0.50;
+            promoTexto = "¡Felicidades! Llegaste al corte #10. Tienes un 50% de Descuento aplicado (Válido de Lunes a Jueves).";
+        } 
+        else if (mostrarPos === 15) {
+            precioFinal = precioOriginal * 0.50;
+            promoTexto = "¡Felicidades! Llegaste al corte #15. Tienes un 50% de Descuento aplicado (Válido de Lunes a Jueves).";
+        } 
+        else if (mostrarPos === 20) {
+            precioFinal = precioOriginal;
+            promoTexto = "¡Felicidades! Llegaste al corte #20. ¡Ya estás participando en el sorteo exclusivo de Zea Barber! 🎉";
         }
 
         const nuevaCita = {
             barbero: reserva.barbero,
             servicio: reserva.servicio,
-            precio: reserva.precio,
+            precioOriginal: precioOriginal,
+            precio: precioFinal,
             fecha: reserva.fecha,
             hora: reserva.hora,
             cliente: nombre,
@@ -261,19 +275,23 @@ async function guardarCita() {
 
         await db.collection("citas").add(nuevaCita);
 
-        let hFin = parseInt(reserva.hora.split(':')[0]);
-        let pStr = reserva.hora.split(' ')[1];
         let horaFinTexto = `${reserva.hora}`;
 
-        const textoWsp = `¡Hola Zea Barber! 💈\n` +
-                         `Agendé mi cita:\n` +
-                         `👤 Cliente: ${nombre}\n` +
-                         `✨ Servicio: ${reserva.servicio}\n` +
-                         `📅 Fecha: ${reserva.fecha}\n` +
-                         `⏰ Hora: ${horaFinTexto}\n\n` +
-                         `🏆 Estado: ${(reserva.precio >= 20) ? `Corte #${mostrarPos}/20` : 'Servicio Regular'}\n` +
-                         `🎁 ${promoTexto}\n` +
-                         `💰 Total a pagar: S/. ${reserva.precio}`;
+        let textoWsp = `¡Hola Zea Barber! 💈\n` +
+                       `Agendé mi cita:\n` +
+                       `👤 Cliente: ${nombre}\n` +
+                       `✨ Servicio: ${reserva.servicio}\n` +
+                       `📅 Fecha: ${reserva.fecha}\n` +
+                       `⏰ Hora: ${horaFinTexto}\n\n` +
+                       `🏆 Estado: ${(precioOriginal >= 20) ? `Corte #${mostrarPos}/20` : 'Servicio Regular'}\n` +
+                       `🎁 ${promoTexto}\n`;
+
+        if (precioFinal !== precioOriginal) {
+            textoWsp += `💰 Precio Regular: S/. ${precioOriginal.toFixed(2)}\n` +
+                        `🔥 Total a pagar (Con Desc.): S/. ${precioFinal.toFixed(2)}`;
+        } else {
+            textoWsp += `💰 Total a pagar: S/. ${precioFinal.toFixed(2)}`;
+        }
         
         const urlWsp = `https://wa.me/51978513608?text=${encodeURIComponent(textoWsp)}`;
         window.location.href = urlWsp;
@@ -293,3 +311,18 @@ function cerrarYRedirigir() {
     window.open(urlWhatsAppFinal, '_blank');
     location.reload(); 
 }
+
+window.addEventListener('scroll', function () {
+    const header = document.querySelector('.header');
+    const logo = document.querySelector('.logo-text');
+
+    if (header && logo) {
+        if (window.scrollY > 0) {
+            header.classList.add('scrolled');
+            logo.src = 'img/logo3.png';
+        } else {
+            header.classList.remove('scrolled');
+            logo.src = 'img/logo2.png';
+        }
+    }
+});
