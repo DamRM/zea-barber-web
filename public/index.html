@@ -13,6 +13,17 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
+    <style>
+        .extras-box { background: #fff; border: 1.5px dashed var(--accent); border-radius: 12px; padding: 14px; margin: -2px 0 14px 0; box-shadow: 0 2px 8px rgba(0,0,0,0.02); animation: slideDown 0.3s ease; }
+        .extras-box h4 { margin: 0 0 2px 0; font-size: 13px; color: var(--text-main); }
+        .extras-box p.extras-sub { margin: 0 0 10px 0; font-size: 11px; color: #6b7280; }
+        .extra-opcion { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 12px; border: 1px solid var(--border-color); border-radius: 10px; margin-bottom: 8px; cursor: pointer; font-size: 13px; }
+        .extra-opcion input { width: 18px; height: 18px; margin: 0 10px 0 0; accent-color: var(--accent); flex-shrink: 0; }
+        .extra-opcion .extra-nombre { display: flex; align-items: center; flex: 1; }
+        .extra-opcion .extra-precio { font-weight: 800; color: var(--accent); white-space: nowrap; }
+        .extra-opcion .extra-precio s { color: #9ca3af; font-weight: 400; font-size: 11px; margin-right: 4px; }
+        .extra-continuar { width: 100%; margin-top: 4px; padding: 11px; border: none; border-radius: 10px; background: var(--accent); color: #fff; font-weight: 700; font-size: 12px; cursor: pointer; }
+    </style>
 </head>
 <body>
 
@@ -348,18 +359,45 @@ Por eso, en Zea Barber Studio trabajamos con citas, brindándote un espacio rese
                     <i class="fas fa-chevron-down arrow"></i>
                 </div>
                 <div id="cat-extras" class="category-content">
+                
+                    <div class="item-card" onclick="selectServicio(this, 'GOLD MASK', 25)">
+                        <div style="flex: 1;">
+                            <h3 style="margin-bottom: 8px;">Gold Mask</h3>
+                            <span class="service-duration"><i class="far fa-clock"></i> 15 MIN</span>
+                        </div>
+                        <span class="price" style="margin-left: 15px;">S/ 25</span>
+                    </div>
+
+                    <div class="item-card" onclick="selectServicio(this, 'EXFOLIACIÓN CAPILAR', 30)">
+                        <div style="flex: 1;">
+                            <h3 style="margin-bottom: 8px;">Exfoliación Capilar</h3>
+                            <span class="service-duration"><i class="far fa-clock"></i> 15 MIN</span>
+                        </div>
+                        <span class="price" style="margin-left: 15px;">S/ 30</span>
+                    </div>
+
+                    <div class="item-card" onclick="selectServicio(this, 'HIDRATACIÓN Y TRATAMIENTO CAPILAR EXPRESS', 30)">
+                        <div style="flex: 1;">
+                            <h3 style="margin-bottom: 8px;">Hidratación y Tratamiento Capilar Express</h3>
+                            <span class="service-duration"><i class="far fa-clock"></i> 15 MIN</span>
+                        </div>
+                        <span class="price" style="margin-left: 15px;">S/ 30</span>
+                    </div>
+                    
                     <div class="item-card" onclick="selectServicio(this, 'PERFILADO DE BARBA', 10)">
                         <div style="flex: 1;">
                             <h3 style="margin-bottom: 8px;">Perfilado de Barba</h3>   
+                            <span class="service-duration"><i class="far fa-clock"></i> 5 MIN</span>
                         </div>
                         <span class="price" style="margin-left: 15px;">S/ 10</span>
                     </div>
 
-                    <div class="item-card" onclick="selectServicio(this, 'DEFINICIÓN DE CEJAS', 10)">
+                    <div class="item-card" onclick="selectServicio(this, 'DEFINICIÓN DE CEJAS', 15 )">
                         <div style="flex: 1;">
                             <h3 style="margin-bottom: 8px;">Definición de Cejas</h3>
+                            <span class="service-duration"><i class="far fa-clock"></i>5 MIN</span>
                         </div>
-                        <span class="price" style="margin-left: 15px;">S/ 10</span>
+                        <span class="price" style="margin-left: 15px;">S/ 15</span>
                     </div>
                     
                     <div class="item-card" onclick="selectServicio(this, 'RITUAL DE BARBA', 30)">
@@ -373,6 +411,7 @@ Por eso, en Zea Barber Studio trabajamos con citas, brindándote un espacio rese
                                 • Tonico de Barbar <br>
                                 • Toalla Fria <br>
                             </p>
+                            <span class="service-duration"><i class="far fa-clock"></i> 25 MIN</span>
                         </div>
                         <span class="price" style="margin-left: 15px;">S/ 30</span>
                     </div>
@@ -385,6 +424,7 @@ Por eso, en Zea Barber Studio trabajamos con citas, brindándote un espacio rese
                                 • Lavado con productos profesionales.<br>
                                 • Styling con herramientas de alta calidad.
                             </p>
+                            <span class="service-duration"><i class="far fa-clock"></i> 15 MIN</span>
                         </div>
                         <span class="price" style="margin-left: 15px;">S/ 10</span>
                     </div>
@@ -603,9 +643,41 @@ Por eso, en Zea Barber Studio trabajamos con citas, brindándote un espacio rese
                 <p style="margin: 0; color: var(--text-main);">🎁 <strong>Club Zea Barber:</strong> ¡Cada 5 servicios acumulas premios!</p>
                 <p style="margin: 5px 0 0 0; color: var(--accent); font-size: 11px;">⭐ Corte #20: ¡Participas automáticamente en el sorteo exclusivo de la barbería!<br>(Promociones válidas estrictamente de Lunes a Jueves)</p>
             </div>
+            
             <input type="text" id="nombre-cliente" placeholder="Tu Nombre">
             <input type="tel" id="tel-cliente" placeholder="WhatsApp (9 dígitos)" maxlength="9">
-            <button class="btn-main" onclick="guardarCita()"style="margin-bottom: 35px;">AGENDAR CITA</button>
+            
+            <!-- Tarjeta de Pago Limpia -->
+            <div class="pago-card">
+                <!-- Cabecera con el título "Pago" y el icono de descarga a la derecha -->
+                <div class="pago-header">
+                    <div class="pago-titulo">Pago</div>
+                    <button type="button" id="btn-descargar-qr" class="btn-icono-descargar" title="Descargar QR">
+                        📥
+                    </button>
+                </div>
+
+                <!-- Imagen del QR -->
+                <div class="qr-wrapper">
+                    <img id="qr-imagen" src="img/qr-yapee.jpeg" alt="QR de pago" class="qr-img">
+                </div>
+
+                <!-- Caja del número y botón de copiar azul -->
+                <div class="numero-box">
+                    <span id="numero-barber">944981818</span>
+                    <button type="button" id="btn-copiar" class="btn-copiar-azul">Copiar</button>
+                </div>
+
+                <!-- Aviso formal de compromiso -->
+                <div class="aviso-alerta">
+                    <strong>⚠️ AVISO IMPORTANTE</strong><br>
+                    🔒 Asegura tu horario con solo S/5 de adelanto.<br>
+                    Tu espacio queda reservado exclusivamente para ti y el adelanto se descuenta del total de tu servicio.<br>
+                    📲 Envía tu captura de Yape/Plin por WhatsApp y ¡tu cita queda confirmada! 💈
+                </div>
+            </div>
+
+            <button class="btn-main" onclick="guardarCita()" style="margin-bottom: 35px;">AGENDAR CITA</button>
         </section>
     </main>
 

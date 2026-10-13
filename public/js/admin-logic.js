@@ -250,7 +250,7 @@ async function verCitas() {
                     <div class="client-name">${c.cliente}</div>
                     <div class="service-details">
                         <strong style="color: var(--primary);">BARBERO: ${c.barbero || 'ZEA'}</strong><br>
-                        ${c.servicio} • S/ ${precioRealEfectivo} ${c.precioCobrado !== undefined && c.precioCobrado < c.precio ? `<span style="text-decoration: line-through; color: #666; font-size: 11px; margin-left: 5px;">S/ ${c.precio}</span>` : ''}
+                        ${c.servicio}${c.extras && c.extras.length ? ' + ' + c.extras.join(' + ') : ''} • S/ ${precioRealEfectivo} ${c.precioCobrado !== undefined && c.precioCobrado < c.precio ? `<span style="text-decoration: line-through; color: #666; font-size: 11px; margin-left: 5px;">S/ ${c.precio}</span>` : ''}
                     </div>
                     <div class="promo-tag ${mostrarPos === 20 ? 'tag-promo' : (mostrarPos % 5 === 0 ? 'tag-promo' : 'tag-normal')}">
                         ${etiqueta}

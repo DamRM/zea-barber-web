@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zea Barber - Tarjeta VIP</title>
+    
+    <link rel="icon" type="image/png" href="img/logo3.png">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <link rel="stylesheet" href="css/wallet.css">
+</head>
+<body>
+
+    <header class="header">
+        <div class="header-container">
+            <div class="header-center">
+                <img src="img/logo3.png" alt="ZEA BARBER STUDIO" class="logo-text">
+            </div>
+        </div>
+    </header>
+
+    <div class="wallet-container">
+        <div class="wallet-card">
+            <h2>CLUB ZEA BARBER</h2>
+            <p>Obtén tu pase digital para Google Wallet. Ingresa tus datos para registrar tu progreso y fecha especial.</p>
+
+            <div class="input-group">
+                <label>Nombre Completo</label>
+                <input type="text" id="w-nombre" class="wallet-input" placeholder="Ej. Juan Pérez">
+            </div>
+
+            <div class="input-group">
+                <label>WhatsApp (9 dígitos)</label>
+                <input type="tel" id="w-whatsapp" class="wallet-input" placeholder="Ej. 987654321" maxlength="9">
+            </div>
+
+            <div class="input-group">
+                <label>Fecha de Cumpleaños</label>
+                <input type="date" id="w-cumple" class="wallet-input">
+            </div>
+
+            <button class="btn-wallet" id="btn-generar" onclick="procesarTarjeta()">
+                <i class="fab fa-google-wallet" style="font-size: 18px;"></i>
+                Generar mi Pase VIP
+            </button>
+
+            <div id="loading-msg">Consultando tu historial en Firestore... <i class="fas fa-spinner fa-spin"></i></div>
+        </div>
+    </div>
+
+    <!-- Scripts de Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="js/wallet.js"></script>
+</body>
+</html>

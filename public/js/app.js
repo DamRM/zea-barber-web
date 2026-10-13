@@ -11,6 +11,16 @@ const firebaseConfig = {
 if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
+// Servicios individuales que permiten adicionales (ajusta los precios y tiempos aquí)
+const SERVICIOS_CON_EXTRAS = ["CLASICO", "FADE", "CORTE A TIJERA Y NAVAJA"];
+const EXTRAS = {
+    ceja: { label: "Definición de ceja", precioNormal: 10, precio: 5, duracion: 5 },
+    cabello: { label: "Diseño en el cabello", precioNormal: 10, precio: 5, duracion: 5 },
+    gold: { label: "Gold Mask", precioNormal: 25, precio: 15, duracion: 15 },
+    capilar: { label: "Exfoliación Capilar", precioNormal: 30, precio: 15, duracion: 15 },
+    tratamiento: { label: "Hidratación y Tratamiento Capilar Express", precioNormal: 30, precio: 15, duracion: 15 }
+};
+
 let reserva = { barbero: "ZEA", servicio: "", precio: 0, fecha: "", hora: "" };
 let urlWhatsAppFinal = ""; 
 
@@ -52,8 +62,77 @@ function selectServicio(el, nombre, precio) {
         cargarHorarios();
     }
 
+    // Si el servicio admite adicionales, se muestran justo debajo de la tarjeta
+    const tieneExtras = mostrarExtras(el);
     document.getElementById('step-2').classList.add('section-visible');
-    irA('step-2');
+    if (tieneExtras) {
+        setTimeout(() => {
+            const y = el.getBoundingClientRect().top + window.pageYOffset - 110;
+            window.scrollTo({ top: y, behavior: 'smooth' });
+        }, 150);
+    } else {
+        irA('step-2');
+    }
+}
+
+function mostrarExtras(el) {
+    // Quita el bloque de una selección anterior
+    const previo = document.getElementById('extras-box');
+    if (previo) previo.remove();
+
+    const aplica = SERVICIOS_CON_EXTRAS.includes((reserva.servicio || "").trim().toUpperCase());
+    if (!aplica || !el) return false;
+
+    const opciones = Object.keys(EXTRAS).map(k => {
+        const extra = EXTRAS[k];
+        const ahorro = extra.precioNormal - extra.precio;
+        
+        let textoSubPrecio = '';
+        if (k === 'cabello') {
+            textoSubPrecio = `<div style="font-size: 9.5px; color: #16a34a; font-weight: 600; margin-top: 2px;">Desde S/ ${extra.precio}</div>`;
+        } else if (ahorro > 0) {
+            textoSubPrecio = `<div style="font-size: 9.5px; color: #16a34a; font-weight: 600; margin-top: 2px;">Ahorras S/ ${ahorro}</div>`;
+        }
+
+        // Si es la ceja, mostramos solo el precio actual sin tachar; para los demás mantenemos el precio normal tachado y el descuento
+        const renderPrecio = (k === 'cabello') 
+            ? `S/ ${extra.precio}` 
+            : `<s>S/ ${extra.precioNormal}</s> S/ ${extra.precio}`;
+
+        return `
+        <label class="extra-opcion">
+            <span class="extra-nombre">
+                <input type="checkbox" id="extra-${k}">
+                <div>
+                    <div style="font-size: 12.5px; font-weight: 600;">${extra.label}</div>
+                    <span class="service-duration" style="font-size: 9.5px; gap: 3px; margin-top: 2px;"><i class="far fa-clock" style="font-size: 9.5px;"></i> ${extra.duracion} MIN</span>
+                </div>
+            </span>
+            <div style="text-align: right;">
+                <span class="extra-precio">${renderPrecio}</span>
+                ${textoSubPrecio}
+            </div>
+        </label>`;
+    }).join('');
+
+    const box = document.createElement('div');
+    box.id = 'extras-box';
+    box.className = 'extras-box';
+    box.innerHTML = `
+        <h4>✨ ¿Deseas añadir un adicional?</h4>
+        <p class="extras-sub">Opcional · precio especial por realizado el corte</p>
+        ${opciones}
+        <button type="button" class="extra-continuar" onclick="irA('step-2')">Continuar →</button>`;
+    el.insertAdjacentElement('afterend', box);
+    return true;
+}
+function obtenerExtrasSeleccionados() {
+    const box = document.getElementById('extras-box');
+    if (!box) return [];
+    return Object.keys(EXTRAS).filter(k => {
+        const chk = document.getElementById('extra-' + k);
+        return chk && chk.checked;
+    });
 }
 
 function obtenerHoraFormateada(iterador) {
@@ -192,7 +271,41 @@ function seleccionarHora(hora, btn) {
         irA('step-3');
     }
 }
+// ==========================================
+// 1. FUNCIÓN DE SEGURIDAD (CON LA LISTA NEGRA)
+// Se coloca fuera de guardarCita(), para poder usarla cuando quieras.
+// ==========================================
+function validarNombreReal(nombre) {
+    if (nombre.length < 3) {
+        return { valido: false, mensaje: "Por favor, ingresa tu nombre real (mínimo 3 letras)." };
+    }
 
+    const regexSoloLetras = /^[a-zA-ZÀ-ÿ\s]+$/;
+    if (!regexSoloLetras.test(nombre)) {
+        return { valido: false, mensaje: "El nombre solo debe contener letras y espacios (sin números ni símbolos)." };
+    }
+
+    const palabrasProhibidas = [
+        "admin", "administrador", "prueba", "test", "root", "null", "undefined", "nadie", "ninguno", "anonimo", "zea", "barbero", "sistema", "xd", "lol",
+        "caca", "mierda", "puto", "puta", "idiota", "estupido", "estupida", "imbecil", "basura", "perra", "zorra", "culo", "ano", "pendejo", "pendeja", "cabron", "asno",
+        "kchero", "cachero", "kchera", "cachera", "ctm", "conchatumare", "conchetumare", "rctm", "huevon", "webon", "weon", "wb", "cabro", "kbro", "chucha", "pinga", "pichula", "verga", "poto", "pipi", "baboso", "mongol", "tarao", "tarado", "maricon", "rosca", "chupin", "ctmr"
+    ];
+    
+    const palabrasEnNombre = nombre.toLowerCase().split(/\s+/);
+    
+    for (let palabra of palabrasEnNombre) {
+        if (palabrasProhibidas.includes(palabra)) {
+            return { valido: false, mensaje: "Por favor, utiliza un nombre real para identificarte en la barbería." };
+        }
+    }
+
+    return { valido: true };
+}
+
+
+// ==========================================
+// 2. TU FUNCIÓN guardarCita() (QUE LLAMA A LA VALIDACIÓN)
+// ==========================================
 async function guardarCita() {
     const nombreInput = document.getElementById('nombre-cliente');
     const telInput = document.getElementById('tel-cliente');
@@ -204,6 +317,15 @@ async function guardarCita() {
     const whatsapp = telInput.value.trim();
 
     if (!nombre) { alert("Por favor, ingresa tu nombre."); return; }
+
+    // 👇 AQUÍ LLAMAMOS A LA FUNCIÓN DE SEGURIDAD QUE DEFINIMOS ARRIBA 👇
+    const validacionNombre = validarNombreReal(nombre);
+    if (!validacionNombre.valido) {
+        alert(validacionNombre.mensaje);
+        return; // Frena la reserva si detecta una grosería
+    }
+    // 👆 ----------------------------------------------------------- 👆
+
     if (whatsapp.length !== 9 || isNaN(whatsapp)) { alert("Ingresa un número de WhatsApp válido (9 dígitos)."); return; }
 
     if (!reserva.servicio || !reserva.fecha || !reserva.hora) {
@@ -259,11 +381,19 @@ async function guardarCita() {
             promoTexto = "¡Felicidades! Llegaste al corte #20. ¡Ya estás participando en el sorteo exclusivo de Zea Barber! 🎉";
         }
 
+        // Adicionales (precio especial fijo; el descuento del club aplica solo al servicio base)
+        const extrasSel = obtenerExtrasSeleccionados();
+        const precioExtras = extrasSel.reduce((acc, k) => acc + EXTRAS[k].precio, 0);
+        const extrasLabels = extrasSel.map(k => EXTRAS[k].label);
+        const totalFinal = precioFinal + precioExtras;
+
         const nuevaCita = {
             barbero: reserva.barbero,
             servicio: reserva.servicio,
             precioOriginal: precioOriginal,
-            precio: precioFinal,
+            extras: extrasLabels,
+            precioExtras: precioExtras,
+            precio: totalFinal,
             fecha: reserva.fecha,
             hora: reserva.hora,
             cliente: nombre,
@@ -286,13 +416,19 @@ async function guardarCita() {
                        `🏆 Estado: ${(precioOriginal >= 20) ? `Corte #${mostrarPos}/20` : 'Servicio Regular'}\n` +
                        `🎁 ${promoTexto}\n`;
 
+        if (extrasLabels.length > 0) {
+            textoWsp += `➕ Adicionales: ${extrasLabels.join(' + ')} (+S/. ${precioExtras.toFixed(2)})\n`;
+        }
+
         if (precioFinal !== precioOriginal) {
-            textoWsp += `💰 Precio Regular: S/. ${precioOriginal.toFixed(2)}\n` +
-                        `🔥 Total a pagar (Con Desc.): S/. ${precioFinal.toFixed(2)}`;
+            textoWsp += `💰 Precio Regular: S/. ${(precioOriginal + precioExtras).toFixed(2)}\n` +
+                        `🔥 Total a pagar (Con Desc.): S/. ${totalFinal.toFixed(2)}\n`;
         } else {
-            textoWsp += `💰 Total a pagar: S/. ${precioFinal.toFixed(2)}`;
+            textoWsp += `💰 Total a pagar: S/. ${totalFinal.toFixed(2)}\n`;
         }
         
+        textoWsp += `⚠️ *Adjunto la captura de mi adelanto de S/ 5.00 para asegurar mi espacio.*`;
+
         const urlWsp = `https://wa.me/51978513608?text=${encodeURIComponent(textoWsp)}`;
         window.location.href = urlWsp;
 
@@ -324,5 +460,33 @@ window.addEventListener('scroll', function () {
             header.classList.remove('scrolled');
             logo.src = 'img/logo2.png';
         }
+    }
+});
+document.addEventListener("DOMContentLoaded", () => {
+    // 1. Copiar número al portapapeles
+    const btnCopiar = document.getElementById("btn-copiar");
+    if (btnCopiar) {
+        btnCopiar.addEventListener("click", () => {
+            const numeroTexto = document.getElementById("numero-barber").innerText;
+            navigator.clipboard.writeText(numeroTexto).then(() => {
+                alert("¡Número copiado al portapapeles!");
+            }).catch(err => {
+                console.error("Error al copiar: ", err);
+            });
+        });
+    }
+
+    // 2. Descargar la imagen del QR
+    const btnDescargarQR = document.getElementById("btn-descargar-qr");
+    if (btnDescargarQR) {
+        btnDescargarQR.addEventListener("click", () => {
+            const imagenSrc = document.getElementById("qr-imagen").src;
+            const enlace = document.createElement("a");
+            enlace.href = imagenSrc;
+            enlace.download = "QR-ZeaBarber.png";
+            document.body.appendChild(enlace);
+            enlace.click();
+            document.body.removeChild(enlace);
+        });
     }
 });
