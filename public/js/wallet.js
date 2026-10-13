@@ -35,34 +35,33 @@ async function procesarTarjeta() {
     loading.style.display = "block";
 
     try {
-        // 1. Guardar o actualizar los datos del cliente (incluyendo cumpleaños) en la colección "clientes"
-        await db.collection("clientes").doc(whatsapp).set({
-            nombre: nombre,
-            whatsapp: whatsapp,
-            cumpleanos: cumple,
-            ultimaActualizacion: firebase.firestore.FieldValue.serverTimestamp()
-        }, { merge: true });
+        // Llamada a tu backend en Render para guardar en Firestore y generar el enlace de Google Wallet
+        const response = await fetch("https://zea-barber-web.onrender.com/api/generar-pase", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                nombre: nombre,
+                whatsapp: whatsapp,
+                cumpleanos: cumple
+            })
+        });
 
-        // 2. Buscar en el historial de citas sus cortes acumulados
-        let maxPos = 0;
-        const historial = await db.collection("citas").where("whatsapp", "==", whatsapp).get();
-        
-        if (!historial.empty) {
-            historial.forEach(doc => {
-                let p = doc.data().posicionCiclo || 0;
-                if (p > maxPos) maxPos = p;
-            });
-        }
-        
-        let sellosActuales = maxPos;
-        while (sellosActuales > 20) { 
-            sellosActuales -= 20; 
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+            throw new Error(data.error || "No se pudo generar el pase.");
         }
 
-        console.log(`Cliente registrado/actualizado: ${nombre} | Cortes: ${sellosActuales} | Cumple: ${cumple}`);
+        console.log("Pase generado con éxito:", data.urlWallet);
 
         setTimeout(() => {
-            alert(`¡Registro exitoso, ${nombre}!\n\nTus datos y tu fecha de cumpleaños han sido guardados.\nProgreso actual: ${sellosActuales} cortes.`);
+            alert(`¡Registro exitoso, ${nombre}!\n\nTu tarjeta VIP está lista para agregar a Google Wallet.`);
+            
+            // Redirigir automáticamente al enlace oficial de Google Wallet
+            window.location.href = data.urlWallet;
+
             btn.disabled = false;
             btn.style.opacity = "1";
             loading.style.display = "none";
@@ -70,7 +69,7 @@ async function procesarTarjeta() {
 
     } catch (error) {
         console.error("Error al procesar tarjeta:", error);
-        alert("Hubo un error al conectar con la base de datos.");
+        alert("Hubo un error al generar tu pase digital. Inténtalo de nuevo.");
         btn.disabled = false;
         btn.style.opacity = "1";
         loading.style.display = "none";
